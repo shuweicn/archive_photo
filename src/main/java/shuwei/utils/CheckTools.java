@@ -4,9 +4,6 @@ import shuwei.config.Config;
 import shuwei.entity.Photo;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,8 +69,6 @@ public class CheckTools {
         }
         // 本次启动移动过， 不需要移动
         if (isExistsRuntime(photo)) {
-
-
             return false;
         }
         return true;
