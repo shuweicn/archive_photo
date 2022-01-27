@@ -86,7 +86,7 @@ public class FileTools {
     public static boolean isNeedChangeFilename(File file) {
         String filename = file.getName();
 
-        Pattern pattern = Pattern.compile("^(19|20)\\d{2}[0-1][0-9][0-3][0-9]_[0-2][0-9][0-5][0-9][0-5][0-9]");
+        Pattern pattern = Pattern.compile("^[1-2][0-9]\\d{2}[0-1][0-9][0-3][0-9]_[0-2][0-9][0-5][0-9][0-5][0-9]");
 
         Matcher matcher = pattern.matcher(filename);
 
@@ -98,6 +98,7 @@ public class FileTools {
     public static List<File> getFileList(File path) {
         ArrayList<File> files = new ArrayList<>();
         getFileList(path, files);
+        Collections.sort(files);
         return files;
     }
 
@@ -113,6 +114,9 @@ public class FileTools {
     }
 
     public static String parseDevicePath(Photo photo) {
+        /**
+         * 从照片中抽取设备信息
+         */
         String device;
         if (photo.getModel() != null) {
             device = photo.getModel();
@@ -123,7 +127,6 @@ public class FileTools {
         } else {
             device = "Other";
         }
-
         return device;
     }
 
@@ -138,20 +141,24 @@ public class FileTools {
 
 
         Date useDate = null;
-
         if (isNeedChangeFilename(photo.getFile()) == false) {
+            // 匹配到此规则， 说明已经处理过的文件了
+            // 不需要修改名称， 名字中必然有时间， 直接用这个时间就好了
+
             useDate = getDateInFilename(photo.getFile());
             dateFilename = photo.getFileName();
 
         } else {
             useDate = getDateInFilename(photo.getFile());
+
             if (useDate == null) {
-                useDate = photo.getFileModifyDate();
-                dateFilename = String.format("%s_%s", dateFilenameFormat.format(photo.getFileModifyDate()), photo.getFileName());
-
+                // 需要修改名字， 并且路径里面没有 日期， 使用 exif 中的创建日期
+                useDate = photo.getDateTimeOriginal();
+                dateFilename = String.format("%s_%s", dateFilenameFormat.format(photo.getDateTimeOriginal()), photo.getFileName());
             } else {
-
+                // 需要求改名字， 但是路径中含有日期， 使用路径中的日期
                 Integer index = photo.getFileName().lastIndexOf(".");
+
                 if (index == -1) {
                     dateFilename = dateFilenameFormat.format(useDate) + "_" + photo.getFileName();
                 } else {
@@ -159,8 +166,7 @@ public class FileTools {
                 }
             }
         }
-
-
+        // 按需增加日期文件夹， 和设备文件夹
         List<String> paths = new ArrayList<String>();
         if (Config.USE_DATE_PATH) {
             DateFormat datePathFormat = new SimpleDateFormat("yyyy-MM");
@@ -182,11 +188,11 @@ public class FileTools {
     }
 
     public static void movePhotoToDest(Photo photo, Integer count) {
-        System.out.println(photo.toInfo());
         File dest = logicPhotoDestination(photo);
 
         File count_dest;
 
+        // 提前创建好目录
         File destParent = new File(dest.getParent());
         if (destParent.exists() == false) {
             destParent.mkdirs();
