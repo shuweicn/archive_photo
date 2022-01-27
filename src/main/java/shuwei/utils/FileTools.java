@@ -130,7 +130,27 @@ public class FileTools {
         return device;
     }
 
+    public static  Date getPhotoTime(Photo photo) {
+        Date useDate = null;
 
+        // 第一优先级从文件名中获取时间
+        useDate = getDateInFilename(photo.getFile());
+        if (useDate == null) {
+            // 第二优先级
+            useDate = photo.getDateTimeOriginal();
+            if (useDate == null) {
+                // 第三优先级 创建时间
+                useDate = photo.getCreateDate();
+                if (useDate == null) {
+                    // 第四优先级修改时间， 这个不太准
+                    return photo.getModifyDate();
+                }
+
+            }
+        }
+        return useDate;
+
+    }
 
     public static File logicPhotoDestination(Photo photo) {
 
@@ -139,33 +159,16 @@ public class FileTools {
 
         DateFormat dateFilenameFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
-
-        Date useDate = null;
+        Date useDate = getPhotoTime(photo);
         if (isNeedChangeFilename(photo.getFile()) == false) {
             // 匹配到此规则， 说明已经处理过的文件了
             // 不需要修改名称， 名字中必然有时间， 直接用这个时间就好了
-
-            useDate = getDateInFilename(photo.getFile());
             dateFilename = photo.getFileName();
 
         } else {
-            useDate = getDateInFilename(photo.getFile());
-
-            if (useDate == null) {
-                // 需要修改名字， 并且路径里面没有 日期， 使用 exif 中的创建日期
-                useDate = photo.getDateTimeOriginal();
-                dateFilename = String.format("%s_%s", dateFilenameFormat.format(photo.getDateTimeOriginal()), photo.getFileName());
-            } else {
-                // 需要求改名字， 但是路径中含有日期， 使用路径中的日期
-                Integer index = photo.getFileName().lastIndexOf(".");
-
-                if (index == -1) {
-                    dateFilename = dateFilenameFormat.format(useDate) + "_" + photo.getFileName();
-                } else {
-                    dateFilename = dateFilenameFormat.format(useDate) + photo.getFileName().substring(index);
-                }
-            }
+            dateFilename = dateFilenameFormat.format(useDate) + "_" + photo.getFileName();
         }
+
         // 按需增加日期文件夹， 和设备文件夹
         List<String> paths = new ArrayList<String>();
         if (Config.USE_DATE_PATH) {

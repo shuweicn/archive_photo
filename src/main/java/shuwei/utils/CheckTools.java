@@ -34,7 +34,7 @@ public class CheckTools {
     private Boolean isExists(Photo photo) {
         if (exists.containsKey(photo.getSha256())) {
             System.out.println(String.format("exist_checksum %s == %s", photo.getFileName(),
-                    existsRuntime.get(photo.getSha256())));
+                    exists.get(photo.getSha256())));
             return true;
         } else {
             return false;
