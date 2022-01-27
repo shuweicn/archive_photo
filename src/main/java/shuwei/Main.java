@@ -18,7 +18,8 @@ public class Main {
         Integer c = 0;
         for (File file: FileTools.getFileList(new File(Config.PHOTO_PATH))) {
             Photo photo = ExifTools.getPhotoByFile(file);
-            // System.out.println(photo.toInfo());
+
+            System.out.println(photo.toInfo());
             if (checker.needMove(photo)) {
                 FileTools.movePhotoToDest(photo);
             }
