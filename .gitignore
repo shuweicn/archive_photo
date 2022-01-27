@@ -1,2 +1,3 @@
 target/
 src/main/resource/app.properties
+.idel/
