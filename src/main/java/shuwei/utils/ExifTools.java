@@ -12,25 +12,45 @@ import java.security.NoSuchAlgorithmException;
 
 
 public class ExifTools {
-    public static String getFileSHA256(File file) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+//    public static String getFileSHA256(File file) {
+//        try {
+//            MessageDigest md = MessageDigest.getInstance("SHA-256");
+//
+//            try (DigestInputStream dis = new DigestInputStream(new FileInputStream(file.getPath()), md)) {
+//                while (dis.read() != -1) ;
+//                md = dis.getMessageDigest();
+//            }
+//            StringBuffer result = new StringBuffer();
+//            for (byte b : md.digest()) {
+//                result.append(String.format("%02x", b));
+//            }
+//            return result.toString();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
-            try (DigestInputStream dis = new DigestInputStream(new FileInputStream(file.getPath()), md)) {
-                while (dis.read() != -1) ;
-                md = dis.getMessageDigest();
+    public static String getFileSHA256(File file) {
+        String[] cmd = {"/usr/bin/sha256sum", file.getPath()};
+        String output = "";
+        try {
+            Process process = Runtime.getRuntime().exec(cmd);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output = output + line;
             }
-            StringBuffer result = new StringBuffer();
-            for (byte b : md.digest()) {
-                result.append(String.format("%02x", b));
-            }
-            return result.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+
+        return output.split("  ")[0];
+
     }
 
     public static Photo getPhotoByFile(File file)  {
