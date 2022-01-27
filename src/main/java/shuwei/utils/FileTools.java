@@ -143,9 +143,11 @@ public class FileTools {
                 useDate = photo.getCreateDate();
                 if (useDate == null) {
                     // 第四优先级修改时间， 这个不太准
-                    return photo.getModifyDate();
+                    useDate = photo.getModifyDate();
+                    if (useDate == null) {
+                        return photo.getFileModifyDate();
+                    }
                 }
-
             }
         }
         return useDate;
