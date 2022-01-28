@@ -129,9 +129,10 @@ public class FileTools {
         }
         return device;
     }
-
+    public final Date ignoreDate = new Date();
     public static  Date getPhotoTime(Photo photo) {
         Date useDate = null;
+
 
         // 第一优先级从文件名中获取时间
         useDate = getDateInFilename(photo.getFile());
