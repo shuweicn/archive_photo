@@ -7,11 +7,6 @@ import shuwei.config.Config;
 import shuwei.entity.Photo;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 
 public class ExifTools {

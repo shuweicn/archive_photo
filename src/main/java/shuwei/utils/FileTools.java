@@ -129,30 +129,42 @@ public class FileTools {
         }
         return device;
     }
-    public final Date ignoreDate = new Date();
+
+    public static Boolean dateCanUse(Date date) {
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Shanghai"));
+        calendar.setTime(date);
+        if (calendar.get(Calendar.YEAR) == 1) {
+            return false;
+        }
+        return true;
+    }
     public static  Date getPhotoTime(Photo photo) {
         Date useDate = null;
 
-
         // 第一优先级从文件名中获取时间
         useDate = getDateInFilename(photo.getFile());
-        if (useDate == null) {
-            // 第二优先级
-            useDate = photo.getDateTimeOriginal();
-            if (useDate == null) {
-                // 第三优先级 创建时间
-                useDate = photo.getCreateDate();
-                if (useDate == null) {
-                    // 第四优先级修改时间， 这个不太准
-                    useDate = photo.getModifyDate();
-                    if (useDate == null) {
-                        return photo.getFileModifyDate();
-                    }
-                }
-            }
+        if ((useDate != null) && dateCanUse(useDate)) {
+            return useDate;
         }
-        return useDate;
 
+        // 第二优先级
+        useDate = photo.getDateTimeOriginal();
+        if ((useDate != null) && dateCanUse(useDate)) {
+            return useDate;
+        }
+        // 第三优先级 创建时间
+        useDate = photo.getCreateDate();
+        if ((useDate != null) && dateCanUse(useDate)) {
+            return useDate;
+        }
+
+        useDate = photo.getModifyDate();
+        if ((useDate != null) && dateCanUse(useDate)) {
+            return useDate;
+        }
+
+        // 第四优先级修改时间， 这个不太准
+        return photo.getFileModifyDate();
     }
 
     public static File logicPhotoDestination(Photo photo) {
