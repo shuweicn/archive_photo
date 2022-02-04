@@ -131,11 +131,11 @@ public class FileTools {
     }
 
     public static Boolean dateCanUse(Date date) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Shanghai"));
-        calendar.setTime(date);
-        if (calendar.get(Calendar.YEAR) == 1) {
-            return false;
-        }
+//        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Shanghai"));
+//        calendar.setTime(date);
+//        if (calendar.get(Calendar.YEAR) == 1) {
+//            return false;
+//        }
         return true;
     }
     public static  Date getPhotoTime(Photo photo) {
@@ -212,7 +212,7 @@ public class FileTools {
 
         // 提前创建好目录
         File destParent = new File(dest.getParent());
-        if (destParent.exists() == false) {
+        if (!destParent.exists()) {
             destParent.mkdirs();
         }
 
@@ -220,7 +220,7 @@ public class FileTools {
             count_dest = dest;
         } else {
 
-            Integer index = dest.getPath().lastIndexOf(".");
+            int index = dest.getPath().lastIndexOf(".");
             if (index == -1) {
                 count_dest = new File(String.format("%s_%s", dest.getPath(), count));
             } else {
@@ -233,7 +233,7 @@ public class FileTools {
         if (count_dest.exists()) {
             movePhotoToDest(photo, count + 1);
         } else {
-            System.out.println(String.format("move '%s' to '%s'", photo.getFile().getPath(), count_dest.getPath()));
+            System.out.printf("move '%s' to '%s'%n", photo.getFile().getPath(), count_dest.getPath());
 
             photo.getFile().renameTo(count_dest);
         }
