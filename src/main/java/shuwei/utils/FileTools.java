@@ -131,11 +131,11 @@ public class FileTools {
     }
 
     public static Boolean dateCanUse(Date date) {
-//        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Shanghai"));
-//        calendar.setTime(date);
-//        if (calendar.get(Calendar.YEAR) == 1) {
-//            return false;
-//        }
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Shanghai"));
+        calendar.setTime(date);
+        if (calendar.get(Calendar.YEAR) <= 1971) {
+            return false;
+        }
         return true;
     }
     public static  Date getPhotoTime(Photo photo) {
